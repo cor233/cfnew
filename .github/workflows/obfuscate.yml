@@ -19,7 +19,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
+
+      - name: 检查代理核心和独立面板
+        run: node --test cfnew-panel/test/*.test.mjs
 
       - name: Install Obfuscator
         run: npm install javascript-obfuscator

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>CFnew 独立面板</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif;background:#100e18;color:#ece8f1}*{box-sizing:border-box}body{margin:0;min-height:100svh;display:grid;place-items:center;padding:24px}main{width:min(100%,480px)}p{color:#afa9be;line-height:1.7}h1{font-size:36px;letter-spacing:-1px;margin:16px 0}label{display:block;margin-top:26px;font-size:14px}input,select,button{font:inherit;width:100%;padding:14px 16px;border-radius:8px}input,select{margin-top:8px;background:#1c1829;color:#fff;border:1px solid #4d445d}input:focus-visible,button:focus-visible{outline:2px solid #9df7cd;outline-offset:3px}button{margin-top:28px;border:0;background:#a9efcc;color:#13251c;cursor:pointer;font-weight:600}.brand{font-size:13px;letter-spacing:3px;color:#a9efcc}small{display:block;color:#938a9f;margin-top:16px;line-height:1.7}#history:empty{display:none}
+</style>
+<main>
+  <div class="brand">CFNEW</div>
+  <h1>连接你的 Worker</h1>
+  <p>填写域名和 UUID，管理配置、优选地址和客户端订阅。</p>
+  <form action="/panel" method="get">
+    <label for="host">Worker 域名</label>
+    <input id="host" name="host" placeholder="worker.example.com" required autocomplete="off" spellcheck="false">
+    <label for="uuid">UUID</label>
+    <input id="uuid" name="uuid" placeholder="与 Worker 的 u 变量一致" required autocomplete="off" spellcheck="false">
+    <label><input id="remember" type="checkbox" style="width:auto;margin-right:8px">在这台设备记住节点</label>
+    <select id="history" aria-label="已保存的节点" hidden></select>
+    <button>打开控制台</button>
+    <small>代理流量直接连接 Worker。订阅从本服务更新。</small>
+  </form>
+</main>
+<script>
+const historyInput=document.getElementById('history');
+let nodes=[];
+try{nodes=JSON.parse(localStorage.getItem('cfnew-panel-nodes')||'[]')}catch{}
+if(nodes.length){historyInput.hidden=false;historyInput.add(new Option('选择已保存的节点',''));nodes.forEach((node,index)=>historyInput.add(new Option(node.host,String(index))))}
+historyInput.addEventListener('change',()=>{if(historyInput.value==='')return;const node=nodes[Number(historyInput.value)];document.getElementById('host').value=node.host;document.getElementById('uuid').value=node.uuid});
+document.querySelector('form').addEventListener('submit',()=>{if(!document.getElementById('remember').checked)return;const node={host:document.getElementById('host').value.trim(),uuid:document.getElementById('uuid').value.trim()};try{localStorage.setItem('cfnew-panel-nodes',JSON.stringify([node,...nodes.filter(item=>item.host!==node.host)].slice(0,20)))}catch{}});
+</script>
+</html>

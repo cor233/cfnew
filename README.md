@@ -19,6 +19,18 @@
 
 [Telegram 交流群](https://t.me/+ft-zI76oovgwNmRh)
 
+## 独立面板模式
+
+此版已将控制台和订阅生成迁到独立服务器。Worker 只处理代理转发与 KV 配置接口，首页返回 `hello`。
+
+1. 把 `明文源吗` 部署到 Worker，设置 `u=你的UUID`，保留原来的 `C` / `c` KV 绑定与配置。
+2. 在独立服务器运行 `cfnew-panel`，通过 HTTPS 访问。
+3. 在页面填写 **Worker 域名和 UUID**，即可管理配置、优选地址和各客户端订阅。
+
+代理连接仍直达 Worker；客户端订阅地址改为独立面板的 `/sub?host=Worker域名&uuid=UUID`。已有 KV 配置无需迁移，保存配置继续写回 Worker。
+
+部署命令、Docker 和反代配置见 [独立面板说明](cfnew-panel/README.md)。以下旧版本更新记录保留作历史参考，涉及 Worker 内置页面或 `/sub` 的旧用法以本节为准。
+
 ## 主要功能
 
 - 多协议支持：VLESS、Trojan、xhttp，可以同时启用多个
